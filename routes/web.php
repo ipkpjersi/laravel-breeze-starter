@@ -21,6 +21,7 @@ Route::get('/', function () {
     if (Auth::user() !== null) {
         return redirect('home');
     }
+
     return view('welcome');
 })->name('welcome');
 
@@ -28,13 +29,13 @@ Route::get('/home', function () {
     if (Auth::user() === null) {
         return view('welcome');
     }
+
     return redirect('dashboard');
 })->name('home');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', '2fa'])->name('dashboard');
-
 
 Route::middleware('auth', '2fa')->group(function () {
     Route::get('/2fa', [PasswordSecurityController::class, 'show2faForm'])->name('2fa');
