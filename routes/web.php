@@ -49,10 +49,14 @@ Route::middleware('auth', '2fa')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::post('/invite-codes/generate-invite-codes', [InviteCodeController::class, 'generateInviteCodes'])->name('generate-invite-codes');
-    Route::post('/invite-codes/revoke-unused-invite-codes', [InviteCodeController::class, 'revokeUnusedInviteCodes'])->name('revoke-unused-invite-codes');
-    Route::get('/invite-codes', [InviteCodeController::class, 'index'])->name('invite-codes-index');
-    Route::get('/invite-codes/data', [InviteCodeController::class, 'data'])->name('invite-codes-data');
+    // Admin-only routes. The middleware gates the whole group so a new route
+    // added here cannot be exposed by forgetting a per-controller check.
+    Route::middleware('admin')->group(function () {
+        Route::post('/invite-codes/generate-invite-codes', [InviteCodeController::class, 'generateInviteCodes'])->name('generate-invite-codes');
+        Route::post('/invite-codes/revoke-unused-invite-codes', [InviteCodeController::class, 'revokeUnusedInviteCodes'])->name('revoke-unused-invite-codes');
+        Route::get('/invite-codes', [InviteCodeController::class, 'index'])->name('invite-codes-index');
+        Route::get('/invite-codes/data', [InviteCodeController::class, 'data'])->name('invite-codes-data');
+    });
 });
 
 require __DIR__.'/auth.php';
